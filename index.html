@@ -55,6 +55,14 @@
     width: 40px; height: 40px; border-radius: 50%;
     background: var(--teal); display: flex; align-items: center; justify-content: center;
     font-size: 18px; font-weight: 900; color: white;
+    cursor: pointer; overflow: hidden; position: relative;
+    border: 2px solid var(--teal);
+  }
+  .header-logo img { width: 100%; height: 100%; object-fit: cover; display: none; }
+  .header-logo:hover::after {
+    content: '📷'; position: absolute; inset: 0;
+    background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
   }
   .header-title { font-size: 20px; font-weight: 900; color: var(--slate800); line-height: 1; }
   .header-sub { font-size: 10px; font-weight: 700; color: var(--slate500); letter-spacing: 1px; }
@@ -388,6 +396,59 @@
     padding: 8px 20px; font-family: 'Hind Siliguri', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer;
   }
 
+  /* ── AI SECTION ── */
+  .ai-card {
+    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    border-radius: 20px; padding: 16px; margin-bottom: 14px; color: white;
+  }
+  .ai-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .ai-icon { font-size: 24px; }
+  .ai-card-title { font-size: 15px; font-weight: 700; color: white; }
+  .ai-card-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
+  .btn-ai {
+    width: 100%; padding: 12px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #00BFA5, #6366F1);
+    color: white; font-family: 'Hind Siliguri', sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-ai:hover { opacity: 0.9; }
+  .btn-ai:disabled { opacity: 0.6; cursor: not-allowed; }
+  .ai-response {
+    background: rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;
+    margin-top: 12px; font-size: 12px; line-height: 1.7; color: rgba(255,255,255,0.9);
+    display: none; white-space: pre-wrap;
+  }
+  .ai-response.show { display: block; animation: fadeIn 0.4s ease; }
+  .ai-typing { display: flex; gap: 4px; align-items: center; padding: 8px 0; }
+  .ai-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: bounce 1.2s infinite; }
+  .ai-dot:nth-child(2) { animation-delay: 0.2s; }
+  .ai-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
+
+  /* API Key settings */
+  .api-key-section {
+    background: white; border-radius: 16px; border: 1px solid var(--slate200);
+    padding: 14px; margin-bottom: 14px;
+  }
+  .api-key-title { font-size: 13px; font-weight: 700; color: var(--slate800); margin-bottom: 4px; }
+  .api-key-sub { font-size: 11px; color: #9CA3AF; margin-bottom: 10px; }
+  .api-key-input-wrap { display: flex; gap: 8px; }
+  .api-key-input {
+    flex: 1; padding: 8px 12px; border: 1px solid #E5E7EB; border-radius: 10px;
+    font-family: 'Hind Siliguri', sans-serif; font-size: 12px; outline: none;
+    transition: border 0.2s;
+  }
+  .api-key-input:focus { border-color: var(--teal); }
+  .btn-save-key {
+    padding: 8px 14px; background: var(--teal); color: white; border: none;
+    border-radius: 10px; font-family: 'Hind Siliguri', sans-serif;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+  }
+  .api-status { font-size: 11px; margin-top: 6px; }
+  .api-status.ok { color: #00E676; }
+  .api-status.no { color: #9CA3AF; }
+
   /* Budget go-to card in charts */
   .budget-goto-card {
     background: white; border-radius: 16px; border: 1px solid var(--slate200);
@@ -408,7 +469,11 @@
 <!-- HEADER -->
 <div class="header">
   <div class="header-left">
-    <div class="header-logo">হ</div>
+    <div class="header-logo" onclick="document.getElementById('headerImgInput').click()" title="ছবি পরিবর্তন করুন">
+      <img id="headerLogoImg" src="" alt="">
+      <span id="headerLogoText">হ</span>
+    </div>
+    <input type="file" id="headerImgInput" accept="image/*" style="display:none" onchange="handleHeaderImage(event)">
     <div>
       <div class="header-title">হিসাব</div>
       <div class="header-sub">স্মার্ট ট্র্যাকার</div>
@@ -500,6 +565,21 @@
     </div>
     <span style="color:#CBD5E1;font-size:20px;">›</span>
   </div>
+
+  <!-- AI ADVICE CARD -->
+  <div class="ai-card">
+    <div class="ai-card-header">
+      <div class="ai-icon">🤖</div>
+      <div>
+        <div class="ai-card-title">AI আর্থিক পরামর্শ</div>
+        <div class="ai-card-sub">Claude AI আপনার ডেটা বিশ্লেষণ করে পরামর্শ দেবে</div>
+      </div>
+    </div>
+    <button class="btn-ai" id="aiBtn" onclick="getAiAdvice()">
+      ✨ AI পরামর্শ নিন
+    </button>
+    <div class="ai-response" id="aiResponse"></div>
+  </div>
 </div>
 
 <!-- PAGE: PROFILE -->
@@ -523,6 +603,17 @@
     <div class="chart-card-title" style="font-size:13px;color:var(--slate600);">অ্যাপ তথ্য ও পরিসংখ্যান</div>
     <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:12px;color:#9CA3AF;">ভার্সন</span><span style="font-size:12px;font-weight:700;color:var(--slate800);">১.০.০ (স্মার্ট)</span></div>
     <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:#9CA3AF;">তৈরির সাল</span><span style="font-size:12px;color:var(--slate800);">২০২৬</span></div>
+  </div>
+
+  <!-- API KEY SETTINGS -->
+  <div class="api-key-section">
+    <div class="api-key-title">🤖 AI পরামর্শ সেটিংস</div>
+    <div class="api-key-sub">Anthropic API Key দিন — শুধু আপনার ডিভাইসে সংরক্ষিত থাকবে</div>
+    <div class="api-key-input-wrap">
+      <input class="api-key-input" id="apiKeyInput" type="password" placeholder="sk-ant-api03-...">
+      <button class="btn-save-key" onclick="saveApiKey()">সেভ</button>
+    </div>
+    <div class="api-status no" id="apiStatus">⚪ Key সেট করা নেই</div>
   </div>
 </div>
 
@@ -968,9 +1059,130 @@ document.getElementById('addModal').addEventListener('click', e=>{ if(e.target==
 document.getElementById('budgetModal').addEventListener('click', e=>{ if(e.target===document.getElementById('budgetModal')) closeBudgetModal(); });
 document.getElementById('editModal').addEventListener('click', e=>{ if(e.target===document.getElementById('editModal')) closeEditProfile(); });
 
+function handleHeaderImage(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    profile.headerImg = ev.target.result;
+    save(); loadHeaderImg();
+  };
+  reader.readAsDataURL(file);
+}
+function loadHeaderImg() {
+  if(profile.headerImg) {
+    document.getElementById('headerLogoImg').src = profile.headerImg;
+    document.getElementById('headerLogoImg').style.display = 'block';
+    document.getElementById('headerLogoText').style.display = 'none';
+  }
+}
+
+// ── API KEY ───────────────────────────────────────────────────────────
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if(!key) { alert('Key খালি রাখা যাবে না'); return; }
+  localStorage.setItem('hisab_apikey', key);
+  document.getElementById('apiKeyInput').value = '';
+  updateApiStatus();
+  alert('✅ API Key সেভ হয়েছে!');
+}
+function updateApiStatus() {
+  const key = localStorage.getItem('hisab_apikey');
+  const el = document.getElementById('apiStatus');
+  if(el) {
+    if(key) { el.textContent='🟢 API Key সেট আছে'; el.className='api-status ok'; }
+    else { el.textContent='⚪ Key সেট করা নেই'; el.className='api-status no'; }
+  }
+}
+
+// ── AI ADVICE ─────────────────────────────────────────────────────────
+async function getAiAdvice() {
+  const apiKey = localStorage.getItem('hisab_apikey');
+  if(!apiKey) {
+    alert('প্রথমে প্রোফাইল ট্যাবে গিয়ে API Key সেট করুন।');
+    switchTab(2); return;
+  }
+
+  const btn = document.getElementById('aiBtn');
+  const responseEl = document.getElementById('aiResponse');
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="ai-typing"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>';
+  responseEl.className = 'ai-response show';
+  responseEl.textContent = 'বিশ্লেষণ করা হচ্ছে...';
+
+  // Prepare data summary
+  const income = transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const expense = transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const dps = transactions.filter(t=>t.type==='dps').reduce((s,t)=>s+t.amount,0);
+  const balance = income - expense - dps;
+
+  const breakdown = {};
+  transactions.filter(t=>t.type==='expense').forEach(t=>{
+    breakdown[t.category]=(breakdown[t.category]||0)+t.amount;
+  });
+  const breakdownText = Object.entries(breakdown)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([cat,amt])=>`${cat}: ৳${amt.toFixed(0)}`)
+    .join(', ');
+
+  const budgetText = Object.entries(budgets)
+    .map(([cat,limit])=>{
+      const spent=breakdown[cat]||0;
+      return `${cat}: খরচ ৳${spent.toFixed(0)}, সীমা ৳${limit}`;
+    }).join('\n');
+
+  const prompt = `আমি একজন বাংলাদেশি। আমার আর্থিক তথ্য:
+মোট আয়: ৳${income.toFixed(0)}
+মোট ব্যয়: ৳${expense.toFixed(0)}
+DPS/সঞ্চয়: ৳${dps.toFixed(0)}
+বর্তমান ব্যালেন্স: ৳${balance.toFixed(0)}
+
+ক্যাটাগরি অনুযায়ী খরচ: ${breakdownText || 'কোনো খরচ নেই'}
+
+বাজেট তুলনা:
+${budgetText || 'কোনো বাজেট সেট করা নেই'}
+
+আমার জন্য সুনির্দিষ্ট পরামর্শ দিন:
+১. কোথায় খরচ কমাতে পারি
+২. কীভাবে বেশি সঞ্চয় করতে পারি
+৩. বাজেট পরিকল্পনা
+৪. আর্থিক লক্ষ্য অর্জনের উপায়
+বাংলায় সংক্ষিপ্ত ও কার্যকর পরামর্শ দিন।`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    if(data.content && data.content[0]) {
+      responseEl.textContent = data.content[0].text;
+    } else if(data.error) {
+      responseEl.textContent = '❌ ত্রুটি: ' + data.error.message;
+    }
+  } catch(err) {
+    responseEl.textContent = '❌ সংযোগ সমস্যা। ইন্টারনেট চেক করুন।';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '✨ আবার পরামর্শ নিন';
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────
 renderTransactions();
 loadProfile();
+loadHeaderImg();
+updateApiStatus();
 </script>
 </body>
 </html>
